@@ -1,0 +1,275 @@
+<nav *ngIf="signer" class="navbar navbar-dark bg-dark">
+  <a class="navbar-brand">Welcomy</a>
+  <form class="form-inline">
+    <button class="btn btn-outline-success my-2 my-sm-0" type="submit">
+      Disconnect
+    </button>
+  </form>
+</nav>
+
+<div class="px-4 py-2 my-5 text-center">
+  <h1 *ngIf="!signer" class="display-5 fw-bold">Welcomy</h1>
+  <div *ngIf="!signer" class="col-lg-6 mx-auto">
+    <h2>a web3 apartments rental manager</h2>
+    <p>to rent or reserve an apartment you need to connect a wallet</p>
+    <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
+      <button
+        (click)="createWallet()"
+        type="button"
+        class="btn btn-success btn-lg px-4 gap-3"
+      >
+        Create Wallet
+      </button>
+      <button
+        (click)="enableImport()"
+        type="button"
+        class="btn btn-info btn-lg px-4 gap-3"
+      >
+        Import Wallet
+      </button>
+      <button
+        (click)="connectWallet()"
+        type="button"
+        class="btn btn-danger btn-lg px-4 gap-3"
+      >
+        Connect Wallet
+      </button>
+    </div>
+
+    <br />
+    <div *ngIf="importedEnabled" class="col-lg-6 mx-auto">
+      <input
+        class="form-control mb-4"
+        #importedAddress
+        type="text"
+        placeholder="Paste your Private Key here"
+      />
+      <button
+        (click)="importWallet(importedAddress.value)"
+        type="button"
+        class="btn btn-warning btn-lg px-4 gap-3"
+      >
+        Connect Imported Wallet
+      </button>
+    </div>
+  </div>
+
+  <div *ngIf="signer" class="col-lg-6 mx-auto">
+    <div class="card text-center">
+      <div class="card-header">
+        A Rental Manager Smart Contract developed for Encode.club Bootcamp
+      </div>
+      <div class="card-body">
+        <p class="card-text">
+          You are connected to the wallet {{ signerAddress }}
+        </p>
+      </div>
+      <div class="card-body">
+        <p class="card-text">My ether balance is: {{ etherBalance }}</p>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="welcomyContract" class="col-lg-6 mx-auto">
+    <div class="col-lg-6 py-4 mx-auto">
+      <div class="card text-center">
+        <div class="card-body">
+          <p class="card-text">
+            You are connected to Welcomy at the address
+            {{ welcomyContract.address }}
+          </p>
+          <p class="card-text">
+            If you want to rent an apartment, list one here entering position
+            and Price per Night:
+          </p>
+          <div class="font-mono flex justify-center mt-4">
+            <div class="py-2">
+              <input
+                #latitude
+                type="text"
+                class="text-xs p-2 border rounded-md"
+                placeholder="Latitude"
+              />
+            </div>
+            <div class="py-2">
+              <input
+                #longitude
+                type="text"
+                class="text-xs p-2 border rounded-md"
+                placeholder="Longitude"
+              />
+            </div>
+            <div class="py-2">
+              <input
+                #pricePerNight
+                type="text"
+                class="text-xs p-2 border rounded-md"
+                placeholder="Price per Night"
+              />
+            </div>
+          </div>
+          <p class="my-4">Click here to list the apartment:</p>
+          <button
+            (click)="
+              listApartment(
+                latitude.value,
+                longitude.value,
+                pricePerNight.value
+              )
+            "
+            type="button"
+            class="btn btn-outline-primary btn-lg px-4 gap-3"
+          >
+            List Apartment
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="signer" class="col-lg-2 py-4 mx-auto">
+    <div class="card text-center">
+      <div class="card-header">Rent Apartment</div>
+      <div class="card-body">
+        <p class="card-text">
+          The number of apartments listed is {{ apartmentNumber }}
+        </p>
+      </div>
+      <div class="card-body">
+        <p class="card-text">Select and apartment and rent it!</p>
+      </div>
+    </div>
+  </div>
+
+  <div
+    *ngIf="
+      welcomyContract && apartmentNumber && longitudes && latitudes && prices
+    "
+    class="mx-auto"
+    style="width: 800px"
+  >
+    <div class="card-group">
+      <div *ngFor="let apt of apartments">
+        <div class="card">
+          <img
+            class="card-img-top"
+            src="https://3dzip.org/wp-content/uploads/2022/08/12722.-Download-Free-Apartment-Interior-Model-By-Bui-Khong-Bay-1-scaled.jpg"
+            alt="Card image cap"
+            style="max-width: 20rem"
+          />
+          <div class="card-body">
+            <h4 class="card-title">Apartment Number: {{ apt }}</h4>
+            <h5 class="card-text">Informations:</h5>
+            <p class="card-text">Longitude: {{ longitudes[apt - 1] }}</p>
+            <p class="card-text">Latidute: {{ latitudes[apt - 1] }}</p>
+            <p class="card-text">Price per Night: {{ prices[apt - 1] }} ETH</p>
+          </div>
+          <div class="card-footer">
+            <label for="checkin" class="form-label">Check-in Date:</label>
+            <input
+              #checkin
+              type="date"
+              id="checkin"
+              class="form-control"
+              name="checkin"
+            />
+            <label for="checkout" class="form-label">Check-out Date:</label>
+            <input
+              #checkout
+              type="date"
+              id="checkout"
+              class="form-control"
+              name="checkout"
+            />
+            <br />
+            <button
+              (click)="makeReservation(apt, checkin.value, checkout.value)"
+              type="button"
+              class="btn btn-outline-primary py-2"
+            >
+              Rent Apartment
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <br />
+
+  <div>
+    <div *ngIf="welcomyContract" class="col-lg-2 py-2 mx-auto">
+      <div class="card text-center">
+        <div class="card-header">Check availability</div>
+        <div class="card-body">
+          <div class="col-lg-10 mx-auto">
+            <p class="my-4">Check if the apartment is free:</p>
+            <div>
+              <label for="aptNumber" class="form-label"
+                >Apartment Number:</label
+              >
+              <input
+                type="text"
+                class="form-control"
+                id="aptnum"
+                name="aptnum"
+              />
+              <label for="checkin" class="form-label">Check-in Date:</label>
+              <input
+                type="date"
+                class="form-control"
+                id="freein"
+                name="freein"
+              />
+              <label for="checkout" class="form-label">Check-out Date:</label>
+              <input
+                type="date"
+                class="form-control"
+                id="freeout"
+                name="freeout"
+              />
+              <br />
+              <button type="button" class="btn btn-outline-primary py-2">
+                Check Availability
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div
+        *ngIf="welcomyContract"
+        class="d-grid gap-2 d-sm-flex justify-content-sm-center mt-4 mx-auto"
+      >
+        <div class="card px-1 p-2 bg-light col-sm-6">
+          <div class="card-body">Owner Pool: {{ ownerPool }} ETH</div>
+        </div>
+      </div>
+
+      <br />
+
+      <div
+        *ngIf="welcomyContract"
+        class="card text-white bg-primary mb-3 mx-auto"
+        style="max-width: 20rem"
+      >
+        <div class="card-body">
+          <input
+            type="text"
+            #amountToWithdraw
+            class="form-control"
+            placeholder="Amount to withdraw"
+          />
+          <br />
+          <button
+            type="button"
+            (click)="withdrawMoney(amountToWithdraw.value)"
+            class="btn btn-warning btn-lg px-4 gap-3"
+          >
+            Withdraw
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
