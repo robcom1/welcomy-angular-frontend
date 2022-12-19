@@ -24,6 +24,7 @@ export class AppComponent {
   claimable: boolean = false;
   importedWallet: ethers.Wallet | undefined;
   importedEnabled: boolean | undefined;
+  listEnabled: boolean | undefined;
   signerAddress: string | undefined;
   apartments: any[] | undefined;
   longitudes: string[] | undefined;
@@ -59,6 +60,14 @@ export class AppComponent {
     this.updateInfo();
     this.getApartmentsInfo();
     this.displayOwnerPool();
+  }
+
+  enableList() {
+    this.listEnabled = true;
+  }
+
+  disableList() {
+    this.listEnabled = false;
   }
 
   enableImport() {

@@ -1,10 +1,25 @@
-<nav *ngIf="signer" class="navbar navbar-dark bg-dark">
-  <a class="navbar-brand">Welcomy</a>
-  <form class="form-inline">
-    <button class="btn btn-outline-success my-2 my-sm-0" type="submit">
-      Disconnect
-    </button>
-  </form>
+<nav *ngIf="signer" class="navbar navbar-expand-lg navbar-dark bg-dark">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="#">Welcomy</a>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        <li class="nav-item">
+          <a class="nav-link" (click)="disableList()" href="#">Home</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" (click)="enableList()" href="#">List Apartment</a>
+        </li>
+      </ul>
+      <span class="navbar-text px-4"
+        >You are connected to the wallet {{ signerAddress }}</span
+      >
+      <form class="d-flex" role="search">
+        <button class="btn btn-outline-success" type="submit">
+          Disconnect
+        </button>
+      </form>
+    </div>
+  </div>
 </nav>
 
 <div class="px-4 py-2 my-5 text-center">
@@ -54,14 +69,15 @@
     </div>
   </div>
 
-  <div *ngIf="signer" class="col-lg-6 mx-auto">
+  <div *ngIf="welcomyContract" class="col-lg-6 mx-auto">
     <div class="card text-center">
       <div class="card-header">
         A Rental Manager Smart Contract developed for Encode.club Bootcamp
       </div>
       <div class="card-body">
         <p class="card-text">
-          You are connected to the wallet {{ signerAddress }}
+          You are connected to Welcomy at the address
+          {{ welcomyContract.address }}
         </p>
       </div>
       <div class="card-body">
@@ -70,18 +86,12 @@
     </div>
   </div>
 
-  <div *ngIf="welcomyContract" class="col-lg-6 mx-auto">
+  <div *ngIf="welcomyContract && listEnabled" class="col-lg-6 mx-auto">
     <div class="col-lg-6 py-4 mx-auto">
       <div class="card text-center">
+        <div class="card-header">List Apartments</div>
         <div class="card-body">
-          <p class="card-text">
-            You are connected to Welcomy at the address
-            {{ welcomyContract.address }}
-          </p>
-          <p class="card-text">
-            If you want to rent an apartment, list one here entering position
-            and Price per Night:
-          </p>
+          <p class="card-text">Enter position and Price per Night:</p>
           <div class="font-mono flex justify-center mt-4">
             <div class="py-2">
               <input
@@ -127,7 +137,7 @@
     </div>
   </div>
 
-  <div *ngIf="signer" class="col-lg-2 py-4 mx-auto">
+  <div *ngIf="signer && !listEnabled" class="col-lg-2 py-4 mx-auto">
     <div class="card text-center">
       <div class="card-header">Rent Apartment</div>
       <div class="card-body">
@@ -143,7 +153,12 @@
 
   <div
     *ngIf="
-      welcomyContract && apartmentNumber && longitudes && latitudes && prices
+      welcomyContract &&
+      apartmentNumber &&
+      longitudes &&
+      latitudes &&
+      prices &&
+      !listEnabled
     "
     class="mx-auto"
     style="width: 800px"
@@ -198,7 +213,7 @@
   <br />
 
   <div>
-    <div *ngIf="welcomyContract" class="col-lg-2 py-2 mx-auto">
+    <div *ngIf="welcomyContract && !listEnabled" class="col-lg-2 py-2 mx-auto">
       <div class="card text-center">
         <div class="card-header">Check availability</div>
         <div class="card-body">
@@ -238,7 +253,7 @@
       </div>
 
       <div
-        *ngIf="welcomyContract"
+        *ngIf="welcomyContract && !listEnabled"
         class="d-grid gap-2 d-sm-flex justify-content-sm-center mt-4 mx-auto"
       >
         <div class="card px-1 p-2 bg-light col-sm-6">
@@ -249,7 +264,7 @@
       <br />
 
       <div
-        *ngIf="welcomyContract"
+        *ngIf="welcomyContract && !listEnabled"
         class="card text-white bg-primary mb-3 mx-auto"
         style="max-width: 20rem"
       >
