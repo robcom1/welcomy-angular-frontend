@@ -9,6 +9,11 @@
         <li class="nav-item">
           <a class="nav-link" (click)="enableList()" href="#">List Apartment</a>
         </li>
+        <li class="nav-item">
+          <a class="nav-link" (click)="enableGetReservations()" href="#"
+            >Your Reservations</a
+          >
+        </li>
       </ul>
       <span class="navbar-text px-4"
         >You are connected to the wallet {{ signerAddress }}</span
@@ -22,10 +27,12 @@
   </div>
 </nav>
 
-<div class="px-4 py-2 my-5 text-center">
+<br />
+
+<div class="px-4 py-4 my-5 text-center">
   <h1 *ngIf="!signer" class="display-5 fw-bold">Welcomy</h1>
   <div *ngIf="!signer" class="col-lg-6 mx-auto">
-    <h2>a web3 apartments rental manager</h2>
+    <h2>web3 apartments rental manager</h2>
     <p>to rent or reserve an apartment you need to connect a wallet</p>
     <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
       <button
@@ -72,26 +79,27 @@
   <div *ngIf="welcomyContract" class="col-lg-6 mx-auto">
     <div class="card text-center">
       <div class="card-header">
-        A Rental Manager Smart Contract developed for Encode.club Bootcamp
+        Web3 rental manager based on NFT developed for Encode.club bootcamp
       </div>
       <div class="card-body">
         <p class="card-text">
           You are connected to Welcomy at the address
           {{ welcomyContract.address }}
         </p>
-      </div>
-      <div class="card-body">
-        <p class="card-text">My ether balance is: {{ etherBalance }}</p>
+        <p class="card-text">Your ether balance is: {{ etherBalance }}</p>
       </div>
     </div>
   </div>
 
-  <div *ngIf="welcomyContract && listEnabled" class="col-lg-6 mx-auto">
-    <div class="col-lg-6 py-4 mx-auto">
+  <div
+    *ngIf="welcomyContract && listEnabled && !reservationEnabled"
+    class="col-lg-7 py-4 mx-auto"
+  >
+    <div class="col-lg-6 py-2 mx-auto">
       <div class="card text-center">
         <div class="card-header">List Apartments</div>
         <div class="card-body">
-          <p class="card-text">Enter position and Price per Night:</p>
+          <h4 class="card-text">Enter position and Price per Night:</h4>
           <div class="font-mono flex justify-center mt-4">
             <div class="py-2">
               <input
@@ -114,11 +122,11 @@
                 #pricePerNight
                 type="text"
                 class="text-xs p-2 border rounded-md"
-                placeholder="Price per Night"
+                placeholder="Price per Night in ETH"
               />
             </div>
           </div>
-          <p class="my-4">Click here to list the apartment:</p>
+          <br />
           <button
             (click)="
               listApartment(
@@ -128,7 +136,7 @@
               )
             "
             type="button"
-            class="btn btn-outline-primary btn-lg px-4 gap-3"
+            class="btn btn-outline-primary btn-lg px-4 gap-4"
           >
             List Apartment
           </button>
@@ -137,16 +145,27 @@
     </div>
   </div>
 
-  <div *ngIf="signer && !listEnabled" class="col-lg-2 py-4 mx-auto">
-    <div class="card text-center">
-      <div class="card-header">Rent Apartment</div>
-      <div class="card-body">
-        <p class="card-text">
-          The number of apartments listed is {{ apartmentNumber }}
-        </p>
+  <div
+    *ngIf="welcomyContract && reservationEnabled"
+    class="col-lg-7 py-4 mx-auto"
+  >
+    <div class="col-lg-6 py-2 mx-auto">
+      <div class="card text-center">
+        <div class="card-header">Your Reservations:</div>
+        <div class="card-body">
+          <h4 class="card-text">Here you can find your Reservations:</h4>
+        </div>
       </div>
+    </div>
+  </div>
+
+  <div *ngIf="signer && !listEnabled" class="col-lg-3 py-4 mx-auto">
+    <div class="card text-center">
+      <div class="card-header">Rent an Apartment here</div>
       <div class="card-body">
-        <p class="card-text">Select and apartment and rent it!</p>
+        <h4 class="card-text">
+          The number of apartments listed is {{ apartmentNumber }}
+        </h4>
       </div>
     </div>
   </div>
@@ -160,12 +179,11 @@
       prices &&
       !listEnabled
     "
-    class="mx-auto"
-    style="width: 800px"
   >
     <div class="card-group">
-      <div *ngFor="let apt of apartments">
+      <div *ngFor="let apt of apartments" class="mx-auto">
         <div class="card">
+          <div class="card-header">Apartment Number: {{ apt }}</div>
           <img
             class="card-img-top"
             src="https://3dzip.org/wp-content/uploads/2022/08/12722.-Download-Free-Apartment-Interior-Model-By-Bui-Khong-Bay-1-scaled.jpg"
@@ -173,22 +191,25 @@
             style="max-width: 20rem"
           />
           <div class="card-body">
-            <h4 class="card-title">Apartment Number: {{ apt }}</h4>
-            <h5 class="card-text">Informations:</h5>
+            <h4 class="card-text">Informations:</h4>
             <p class="card-text">Longitude: {{ longitudes[apt - 1] }}</p>
             <p class="card-text">Latidute: {{ latitudes[apt - 1] }}</p>
             <p class="card-text">Price per Night: {{ prices[apt - 1] }} ETH</p>
           </div>
           <div class="card-footer">
-            <label for="checkin" class="form-label">Check-in Date:</label>
+            <label for="checkin" class="form-label my-2 py-2"
+              >Check-in Date:</label
+            >
             <input
               #checkin
               type="date"
               id="checkin"
-              class="form-control"
+              class="form-control my-2"
               name="checkin"
             />
-            <label for="checkout" class="form-label">Check-out Date:</label>
+            <label for="checkout" class="form-label my-2 py-2"
+              >Check-out Date:</label
+            >
             <input
               #checkout
               type="date"
@@ -197,10 +218,20 @@
               name="checkout"
             />
             <br />
+
+            <!-- <button
+              (click)="checkAvailability(apt, checkin.value, checkout.value)"
+              type="button"
+              class="btn btn-outline-danger my-3 py-1 px-3"
+            >
+              Check Availability
+            </button>
+            <br /> -->
+
             <button
               (click)="makeReservation(apt, checkin.value, checkout.value)"
               type="button"
-              class="btn btn-outline-primary py-2"
+              class="btn btn-outline-primary my-3 py-3 px-4"
             >
               Rent Apartment
             </button>
@@ -212,78 +243,27 @@
 
   <br />
 
-  <div>
-    <div *ngIf="welcomyContract && !listEnabled" class="col-lg-2 py-2 mx-auto">
-      <div class="card text-center">
-        <div class="card-header">Check availability</div>
-        <div class="card-body">
-          <div class="col-lg-10 mx-auto">
-            <p class="my-4">Check if the apartment is free:</p>
-            <div>
-              <label for="aptNumber" class="form-label"
-                >Apartment Number:</label
-              >
-              <input
-                type="text"
-                class="form-control"
-                id="aptnum"
-                name="aptnum"
-              />
-              <label for="checkin" class="form-label">Check-in Date:</label>
-              <input
-                type="date"
-                class="form-control"
-                id="freein"
-                name="freein"
-              />
-              <label for="checkout" class="form-label">Check-out Date:</label>
-              <input
-                type="date"
-                class="form-control"
-                id="freeout"
-                name="freeout"
-              />
-              <br />
-              <button type="button" class="btn btn-outline-primary py-2">
-                Check Availability
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div
-        *ngIf="welcomyContract && !listEnabled"
-        class="d-grid gap-2 d-sm-flex justify-content-sm-center mt-4 mx-auto"
-      >
-        <div class="card px-1 p-2 bg-light col-sm-6">
-          <div class="card-body">Owner Pool: {{ ownerPool }} ETH</div>
-        </div>
-      </div>
-
-      <br />
-
-      <div
-        *ngIf="welcomyContract && !listEnabled"
-        class="card text-white bg-primary mb-3 mx-auto"
-        style="max-width: 20rem"
-      >
-        <div class="card-body">
-          <input
-            type="text"
-            #amountToWithdraw
-            class="form-control"
-            placeholder="Amount to withdraw"
-          />
-          <br />
-          <button
-            type="button"
-            (click)="withdrawMoney(amountToWithdraw.value)"
-            class="btn btn-warning btn-lg px-4 gap-3"
-          >
-            Withdraw
-          </button>
-        </div>
+  <div
+    *ngIf="welcomyContract && !listEnabled"
+    class="d-grid gap-2 d-sm-flex justify-content-sm-center mt-4 mx-auto"
+  >
+    <div class="card text-center">
+      <div class="card-header">Owner Pool: {{ ownerPool }} ETH</div>
+      <div class="card-body">
+        <input
+          type="text"
+          #amountToWithdraw
+          class="form-control"
+          placeholder="Amount to withdraw"
+        />
+        <br />
+        <button
+          type="button"
+          (click)="withdrawMoney(amountToWithdraw.value)"
+          class="btn btn-warning btn-lg px-4 gap-3"
+        >
+          Withdraw
+        </button>
       </div>
     </div>
   </div>

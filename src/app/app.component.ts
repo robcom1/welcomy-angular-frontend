@@ -25,6 +25,7 @@ export class AppComponent {
   importedWallet: ethers.Wallet | undefined;
   importedEnabled: boolean | undefined;
   listEnabled: boolean | undefined;
+  reservationEnabled: boolean | undefined;
   signerAddress: string | undefined;
   apartments: any[] | undefined;
   longitudes: string[] | undefined;
@@ -62,12 +63,19 @@ export class AppComponent {
     this.displayOwnerPool();
   }
 
+  enableGetReservations() {
+    this.reservationEnabled = true;
+    this.listEnabled = true;
+  }
+
   enableList() {
     this.listEnabled = true;
+    this.reservationEnabled = false;
   }
 
   disableList() {
     this.listEnabled = false;
+    this.reservationEnabled = false;
   }
 
   enableImport() {
@@ -197,7 +205,7 @@ export class AppComponent {
     let tx = await this.welcomyContract!['listApartment'](
       ethers.utils.formatBytes32String(longitude),
       ethers.utils.formatBytes32String(latitude),
-      Number(pricePerNight)
+      ethers.utils.parseEther(pricePerNight)
     );
     console.log(tx);
     const receipt = await tx.wait();
@@ -208,6 +216,16 @@ export class AppComponent {
     this.getApartmentsInfo();
     this.displayOwnerPool();
   }
+
+  // async checkAvailability(
+  //   aptNumber: number,
+  //   dateStart: string,
+  //   dateEnd: string
+  // ) {
+  //   console.log(
+  //     `Apartment data information for checking availability ! ${aptNumber}, ${dateStart}, ${dateEnd} \n`
+  //   );
+  // }
 
   async makeReservation(aptNumber: number, dateStart: string, dateEnd: string) {
     console.log(
@@ -268,26 +286,6 @@ export class AppComponent {
     this.getApartmentsInfo();
     this.displayOwnerPool();
   }
-
-  // async burnTokens(amount: string) {
-  //   if (this.tokenContract) {
-  //     const allowTx = await this.tokenContract['approve'](
-  //       this.welcomyAddress,
-  //       ethers.constants.MaxUint256
-  //     );
-  //     const receiptAllow = await allowTx.wait();
-  //     console.log(`Allowance confirmed (${receiptAllow.transactionHash})\n`);
-  //     const tx = await this.welcomyContract!['returnTokens'](
-  //       ethers.utils.parseEther(amount)
-  //     );
-  //     const receipt = await tx.wait();
-  //     console.log(`Burn confirmed (${receipt.transactionHash})\n`);
-  //     this.updateInfo();
-  //     this.getApartmentsInfo();
-  //     this.displayPrize();
-  //     this.displayOwnerPool();
-  //   }
-  // }
 
   async withdrawMoney(amount: string) {
     if (this.welcomyContract) {
